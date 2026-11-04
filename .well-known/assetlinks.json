@@ -4,7 +4,10 @@
     "target": {
       "namespace": "android_app",
       "package_name": "com.terrellfrancis.radr",
-      "sha256_cert_fingerprints": ["REPLACE_WITH_PLAY_APP_SIGNING_SHA256"]
+      "sha256_cert_fingerprints": [
+        "23:88:52:C3:F6:C3:DF:B4:91:DA:41:8D:77:5A:B0:37:D4:87:07:49:67:49:F9:4E:CE:E6:56:C7:7A:01:3B:10",
+        "ED:E0:EF:E2:18:D9:FA:22:C3:2D:F4:94:6D:AA:DE:7B:3D:57:E6:E4:22:2B:03:58:0B:BF:83:DD:3D:76:27:DC"
+      ]
     }
   }
 ]
