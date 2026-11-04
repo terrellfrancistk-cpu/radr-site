@@ -1,0 +1,10 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["GF7Q89UD42.app.rork.fep0gxqfi1xjmq14cu1jh"],
+        "components": [{ "/": "/join/*", "comment": "Every RADR share link" }]
+      }
+    ]
+  }
+}

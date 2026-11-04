@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Check</title>
+<!-- Sign-in captcha host for the native apps. They load it in a WebView as
+     captcha.html?sitekey=<public Turnstile site key>. The document origin is
+     this host (radr.tkhub.app), which is the hostname on RADR's widget.
+     Managed mode, appearance "interaction-only": nothing is drawn unless
+     Cloudflare needs a tap. Results go back through whichever bridge exists:
+     Android window.NativeCaptcha.onResult(kind, value), iOS
+     webkit.messageHandlers.captcha.postMessage({kind, value}). -->
+<style>html,body{margin:0;background:#0A0D0A;color:#E8F0EA}#w{display:flex;justify-content:center}</style>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=boot&render=explicit" async defer></script>
+</head>
+<body>
+<div id="w"></div>
+<script>
+  function send(kind, value) {
+    value = value || "";
+    try { if (window.NativeCaptcha) { window.NativeCaptcha.onResult(kind, value); return; } } catch (e) {}
+    try { if (window.webkit && window.webkit.messageHandlers.captcha) { window.webkit.messageHandlers.captcha.postMessage({ kind: kind, value: value }); return; } } catch (e) {}
+  }
+  function boot() {
+    // Public site key. Used when the app did not pass one, so a bundle built
+    // without EXPO_PUBLIC_TURNSTILE_SITE_KEY still renders the widget.
+    // Hostnames: radr.tkhub.app (add in Turnstile), localhost.
+    var DEFAULT_KEY = "0x4AAAAAAFi64rhyBV6N7ST2";
+    var key = new URLSearchParams(location.search).get("sitekey") || DEFAULT_KEY;
+    if (!key) { send("error", "no-site-key"); return; }
+    turnstile.render("#w", {
+      sitekey: key, theme: "dark", appearance: "interaction-only", size: "flexible",
+      callback: function (t) { send("token", t); },
+      "expired-callback": function () { send("expired"); },
+      "error-callback": function () { send("error", "widget"); return true; },
+      "before-interactive-callback": function () { send("interactive"); }
+    });
+  }
+</script>
+</body>
+</html>

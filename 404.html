@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Join on RADR</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:system-ui,sans-serif;background:#0A0D0A;color:#E8F0EA;display:flex;min-height:100vh;align-items:center;justify-content:center}main{max-width:420px;padding:24px;text-align:center}a.b{display:block;margin:12px 0;padding:14px;border-radius:12px;background:#3DDC84;color:#0A0D0A;font-weight:700;text-decoration:none}a{color:#3DDC84}code{font-size:1.4em;letter-spacing:.1em}</style></head><body><main>
+<h1>RADR</h1><p>You've been invited to a RADR drive.</p><p><code id="c"></code></p>
+<a class="b" id="store" href="https://play.google.com/store/apps/details?id=com.terrellfrancis.radr">Get RADR</a>
+<p>Already have RADR? Open this link on your phone and it opens in the app.</p>
+<p><a href="/support/">Help</a></p></main>
+<script>
+var m=location.pathname.match(/^\/join\/([^\/?#]+)/);var c=m?decodeURIComponent(m[1]):"";
+document.getElementById("c").textContent=c;
+if(/iPhone|iPad|iPod/i.test(navigator.userAgent))document.getElementById("store").href="https://apps.apple.com/app/id6810073936";
+</script></body></html>

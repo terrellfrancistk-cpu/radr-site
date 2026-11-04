@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Signing in to RADR</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:system-ui,sans-serif;background:#0A0D0A;color:#E8F0EA;display:flex;min-height:100vh;align-items:center;justify-content:center}main{max-width:420px;padding:24px;text-align:center}a.b{display:block;margin:12px 0;padding:14px;border-radius:12px;background:#3DDC84;color:#0A0D0A;font-weight:700;text-decoration:none}a{color:#3DDC84}code{font-size:1.4em;letter-spacing:.1em}</style></head><body><main>
+<h1>RADR</h1><p id="m">Finishing sign-in…</p><a class="b" id="o" href="#" style="display:none">Open RADR</a></main>
+<script>
+var q=new URLSearchParams(location.search),h=new URLSearchParams(location.hash.replace(/^#/,""));
+var err=q.get("error_description")||q.get("error")||h.get("error_description")||h.get("error");
+var code=q.get("code");
+if(err){document.getElementById("m").textContent="Sign-in didn't finish: "+err+". Go back to RADR and try again.";}
+else if(code&&/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)){
+ var u="rork-fep0gxqfi1xjmq14cu1jh://auth?app=radr&code="+encodeURIComponent(code);
+ var o=document.getElementById("o");o.href=u;o.style.display="block";
+ document.getElementById("m").textContent="Returning you to RADR…";location.replace(u);}
+else{location.replace("https://radr-drive.rork.app/auth/callback"+location.search+location.hash);}
+</script></body></html>
