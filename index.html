@@ -133,6 +133,21 @@
   </footer>
 </div>
 <script>
+  // UX round 2: the visitor's own store is the filled button (both stay).
+  (function () {
+    var ua = navigator.userAgent || "";
+    var ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    if (!ios) return;
+    var rows = document.querySelectorAll(".stores");
+    for (var i = 0; i < rows.length; i++) {
+      var play = rows[i].querySelector('a[href*="play.google.com"]');
+      var apple = rows[i].querySelector('a[href*="apps.apple.com"]');
+      if (!play || !apple) continue;
+      rows[i].insertBefore(apple, play);
+      apple.classList.remove("alt");
+      play.classList.add("alt");
+    }
+  })();
   (function () {
     var root = document.documentElement;
     var current = "system";
