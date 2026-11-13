@@ -1,0 +1,55 @@
+# Free public PREVIEW links for radr.tkhub.app (Cloudflare Pages), so Terrell
+# can see the exact build before it goes live. Added 2026-11-13.
+#
+# - Runs on pushes to any branch except main. GitHub Pages still serves the
+#   live site from main; this never touches it. The Pages project's
+#   production branch is a name no branch uses, so every deploy is a preview.
+# - Needs two repository secrets (free Cloudflare account, no spending):
+#   CLOUDFLARE_API_TOKEN (Pages: Edit) and CLOUDFLARE_ACCOUNT_ID. Until they
+#   are set the job explains that and stops green.
+# - The link is written to the run summary:
+#   https://<branch-name-with-dashes>.radr-site-preview.pages.dev
+name: preview-pages
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore: [main]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      PROJECT: radr-site-preview
+    steps:
+      - name: Preview secrets present?
+        id: gate
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "No Cloudflare secrets yet: preview skipped." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.ok == 'true'
+      - name: "Stage the site (CNAME left out, so a preview never claims radr.tkhub.app)"
+        if: steps.gate.outputs.ok == 'true'
+        run: |
+          mkdir -p out
+          rsync -a --exclude .git --exclude .github --exclude CNAME --exclude README.md ./ out/
+          printf '/*\n  X-Robots-Tag: noindex, nofollow\n' > out/_headers
+      - name: Deploy as a preview (never production)
+        if: steps.gate.outputs.ok == 'true'
+        run: |
+          npx --yes wrangler@3.99.0 pages project create "$PROJECT" --production-branch=production-never-used >/dev/null 2>&1 || true
+          npx --yes wrangler@3.99.0 pages deploy out --project-name="$PROJECT" --branch="$GITHUB_REF_NAME" --commit-hash="$GITHUB_SHA" | tee deploy.log
+          url=$(grep -oE 'https://[a-z0-9.-]+\.pages\.dev' deploy.log | tail -1)
+          alias="https://$(echo "$GITHUB_REF_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-|-$//g' | cut -c1-28).$PROJECT.pages.dev"
+          { echo "### radr.tkhub.app preview (not live)"; echo "- This commit: $url"; echo "- Latest on this branch: $alias"; echo "- Commit: \`${GITHUB_SHA::7}\`"; } >> "$GITHUB_STEP_SUMMARY"
