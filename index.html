@@ -88,7 +88,7 @@
     if (!el || seen || reduce) { if (el) el.remove(); return; }
     try { sessionStorage.setItem("radr.splash", "1"); } catch (e) {}
     setTimeout(function () {
-      el.innerHTML = '<img src="/launch/tkhub.png" alt="TK Hub LLC" width="140" height="140">';
+      el.innerHTML = '<img src="/launch/tkhub.png" srcset="/launch/tkhub.png 1x, /launch/tkhub-300.png 2x" alt="TK Hub LLC" width="140" height="140">';
     }, 600);
     setTimeout(function () { el.className = "gone"; }, 1600);
     setTimeout(function () { el.remove(); }, 1800);
