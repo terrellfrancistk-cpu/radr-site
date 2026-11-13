@@ -26,6 +26,9 @@
   .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
   header.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
   .brand{font-weight:800;letter-spacing:.06em;font-size:20px;color:var(--ink);text-decoration:none}
+  /* 44 px tap areas without moving anything (A11Y-1, 2026-11-13). */
+  .brand{padding:7px 0;margin:-7px 0}
+  header.top a:not(.brand){padding:10px 0;margin:-10px 0}
   .hero{display:grid;gap:40px;align-items:center;padding:24px 0 56px}
   @media(min-width:860px){.hero{grid-template-columns:1.1fr .9fr;padding:48px 0 88px}}
   h1{font-size:clamp(40px,7vw,68px);line-height:1.02;margin:0;letter-spacing:-.02em}
