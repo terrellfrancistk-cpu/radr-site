@@ -13,12 +13,13 @@
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script>
-  // Light / Dark / System (System default), same choice as the apps. Before paint.
-  try { var t = localStorage.getItem("radr.theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+  // Light / Dark / System, Dark default (Terrell, 2026-11-13: the live look stays).
+  // Before paint. Nothing stored, or storage blocked, means Dark.
+  (function () { var t = "dark"; try { var s = localStorage.getItem("radr.theme"); if (s === "light" || s === "system") t = s; } catch (e) {} document.documentElement.setAttribute("data-theme", t); })();
 </script>
 <style>
   :root{--bg:#0A0D0A;--surface:#141914;--raised:#1B231C;--line:#233026;--ink:#E8F0EA;--dim:#9AAE9F;--accent:#1FE08A;--on-accent:#0A0D0A;--warn:#FFB020;color-scheme:dark}
-  @media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#F4F7F4;--surface:#FFFFFF;--raised:#E9EFEA;--line:#CBD6CE;--ink:#0A0D0A;--dim:#4A5A4F;--accent:#067A46;--on-accent:#FFFFFF;--warn:#965800;color-scheme:light}}
+  @media (prefers-color-scheme: light){:root[data-theme="system"]{--bg:#F4F7F4;--surface:#FFFFFF;--raised:#E9EFEA;--line:#CBD6CE;--ink:#0A0D0A;--dim:#4A5A4F;--accent:#067A46;--on-accent:#FFFFFF;--warn:#965800;color-scheme:light}}
   :root[data-theme="light"]{--bg:#F4F7F4;--surface:#FFFFFF;--raised:#E9EFEA;--line:#CBD6CE;--ink:#0A0D0A;--dim:#4A5A4F;--accent:#067A46;--on-accent:#FFFFFF;--warn:#965800;color-scheme:light}
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
@@ -177,8 +178,8 @@
   })();
   (function () {
     var root = document.documentElement;
-    var current = "system";
-    try { current = localStorage.getItem("radr.theme") || "system"; } catch (e) {}
+    var current = "dark";
+    try { current = localStorage.getItem("radr.theme") || "dark"; } catch (e) {}
     var buttons = document.querySelectorAll(".theme button");
     function show(t) {
       for (var i = 0; i < buttons.length; i++) buttons[i].setAttribute("aria-checked", String(buttons[i].getAttribute("data-t") === t));
@@ -186,8 +187,8 @@
     show(current);
     for (var i = 0; i < buttons.length; i++) buttons[i].addEventListener("click", function () {
       var t = this.getAttribute("data-t");
-      if (t === "system") root.removeAttribute("data-theme"); else root.setAttribute("data-theme", t);
-      try { if (t === "system") localStorage.removeItem("radr.theme"); else localStorage.setItem("radr.theme", t); } catch (e) {}
+      root.setAttribute("data-theme", t);
+      try { localStorage.setItem("radr.theme", t); } catch (e) {}
       show(t);
     });
   })();
