@@ -1,0 +1,9 @@
+# radr.tkhub.app (added 2026-11-14). Public pages are open to search engines;
+# sign-in returns, drive invites and the human check are not pages to list.
+User-agent: *
+Allow: /
+Disallow: /auth/
+Disallow: /join/
+Disallow: /captcha.html
+
+Sitemap: https://radr.tkhub.app/sitemap.xml
