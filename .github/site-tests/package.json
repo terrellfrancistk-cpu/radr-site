@@ -1,9 +1,0 @@
-{
-  "name": "radr-site-tests",
-  "private": true,
-  "description": "Checks for radr.tkhub.app. Not part of the site.",
-  "devDependencies": {
-    "@axe-core/playwright": "4.14.0",
-    "@playwright/test": "1.63.0"
-  }
-}
