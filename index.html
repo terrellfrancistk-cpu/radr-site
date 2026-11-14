@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <title>RADR</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:site_name" content="RADR">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The RADR logo">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://radr.tkhub.app/og-image.jpg">
 <meta name="description" content="RADR: your speed beside the posted limit, the next turn spoken out loud, and hazards on your route — on one glanceable screen.">
 <meta name="theme-color" content="#0A0D0A">
 <link rel="canonical" href="https://radr.tkhub.app/">
@@ -26,7 +35,8 @@
   a{color:var(--accent)}
   .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
   header.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
-  .brand{font-weight:800;letter-spacing:.06em;font-size:20px;color:var(--ink);text-decoration:none}
+  .brand{font-weight:800;letter-spacing:.06em;font-size:20px;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:10px}
+  .brand img{width:30px;height:30px;border-radius:8px}
   /* 44 px tap areas without moving anything (A11Y-1, 2026-11-13). */
   .brand{padding:7px 0;margin:-7px 0}
   header.top a:not(.brand){padding:10px 0;margin:-10px 0}
@@ -71,36 +81,44 @@
   .theme button{min-height:44px;min-width:64px;border-radius:10px;border:1px solid var(--line);background:var(--raised);color:var(--ink);font:inherit;cursor:pointer}
   .theme button[aria-checked="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
   .center{text-align:center}
-  /* Launch splash (house rule ONB-1): RADR logo, then TK Hub on black for ~1 s, then the page.
-     Once per visit; skipped for reduced motion. Same timings as the web app's LaunchSplash. */
-  #splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#000;transition:opacity .2s ease-out}
-  #splash img{width:140px;height:140px}
-  #splash .radr{border-radius:32px}
-  #splash.gone{opacity:0;pointer-events:none}
+  /* Launch splash (house rule ONB-1; one screen, Terrell 2026-11-14): RADR logo large and
+     centred, "by TK Hub" with the smaller TK Hub logo beneath, on black. Shown only while the
+     page is loading: it fades in only if loading takes longer than 250 ms (fast and cached loads
+     never see it) and is removed as soon as the page is ready. No minimum time. */
+  #splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;background:#000;opacity:0;animation:splash-in .15s ease-out .25s forwards}
+  #splash .radr{width:160px;height:160px;border-radius:36px}
+  #splash .by{display:flex;flex-direction:column;align-items:center;gap:8px;color:#9ca3af;font:600 12px/1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.18em;text-transform:uppercase}
+  #splash .hub{width:56px;height:56px}
+  #splash.gone{animation:none;opacity:0;transition:opacity .12s ease-out;pointer-events:none}
+  @keyframes splash-in{to{opacity:1}}
+  @media (prefers-reduced-motion:reduce){#splash{animation:none;opacity:1}#splash.gone{transition:none}}
 </style>
 </head>
 <body>
-<div id="splash" data-testid="launch-splash" aria-hidden="true">
-  <img class="radr" src="/launch/radr.png" alt="RADR" width="140" height="140">
+<div id="splash" data-testid="launch-splash">
+  <img class="radr" src="/icon-512.png" srcset="/icon-192.png 192w, /icon-512.png 512w, /icon.png 1024w" sizes="160px" alt="RADR" width="160" height="160">
+  <div class="by">
+    <span>by TK Hub</span>
+    <img class="hub" src="/launch/tkhub-300.png" srcset="/launch/tkhub.png 144w, /launch/tkhub-300.png 300w" sizes="56px" alt="TK Hub LLC" width="56" height="56">
+  </div>
 </div>
 <script>
+  // Remove the splash the moment the page is ready: no added wait (Terrell, 2026-11-14).
   (function () {
-    var el = document.getElementById("splash");
-    var seen = false;
-    try { seen = sessionStorage.getItem("radr.splash") === "1"; } catch (e) {}
-    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!el || seen || reduce) { if (el) el.remove(); return; }
-    try { sessionStorage.setItem("radr.splash", "1"); } catch (e) {}
-    setTimeout(function () {
-      el.innerHTML = '<img src="/launch/tkhub.png" srcset="/launch/tkhub.png 1x, /launch/tkhub-300.png 2x" alt="TK Hub LLC" width="140" height="140">';
-    }, 600);
-    setTimeout(function () { el.className = "gone"; }, 1600);
-    setTimeout(function () { el.remove(); }, 1800);
+    function done() {
+      var el = document.getElementById("splash");
+      if (!el) return;
+      if (Number(getComputedStyle(el).opacity) === 0) { el.remove(); return; }
+      el.className = "gone";
+      setTimeout(function () { el.remove(); }, 150);
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", done);
+    else done();
   })();
 </script>
 <div class="wrap">
   <header class="top">
-    <a class="brand" href="/">RADR</a>
+    <a class="brand" href="/"><img src="/icon-96.png" srcset="/icon-96.png 96w, /icon-192.png 192w" sizes="30px" width="30" height="30" alt="">RADR</a>
     <a href="/support/">Support</a>
   </header>
 
